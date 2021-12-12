@@ -8,33 +8,33 @@ import java.util.HashSet;
 
 public class Ucs<S, A> {
   public static <S, A> Solution<S, A> search(Problem<S, A> prob) {
-    Node<S, A> starting_node = Node.fromInitialState(prob.initialState());
-    Node<S, A> goal_node = Ucs.nodeSearch(starting_node, prob);
+    Node<S, A> startingNode = Node.fromInitialState(prob.initialState());
+    Node<S, A> goalNode = Ucs.nodeSearch(startingNode, prob);
 
-    if (goal_node == null) return null;
+    if (goalNode == null) return null;
 
-    return goal_node.toSolution();
+    return goalNode.toSolution();
   }
 
-  private static <S, A> Node<S, A> nodeSearch(Node<S, A> starting_node, Problem<S, A> problem) {
+  private static <S, A> Node<S, A> nodeSearch(Node<S, A> startingNode, Problem<S, A> problem) {
     PriorityQueue<Node<S, A>> frontier = new PriorityQueue<Node<S, A>>();
-    frontier.add(starting_node);
+    frontier.add(startingNode);
 
-    HashSet<S> explored_states = new HashSet<S>();
-    HashMap<S, Node<S, A>> state_to_frontier = new HashMap<S, Node<S, A>>();
+    HashSet<S> exploredStates = new HashSet<S>();
+    HashMap<S, Node<S, A>> stateToFrontier = new HashMap<S, Node<S, A>>();
 
     while (frontier.size() > 0) {
       var n = frontier.poll();
 
-      if (explored_states.contains(n.state)) continue;
-      else explored_states.add(n.state);
+      if (exploredStates.contains(n.state)) continue;
+      else exploredStates.add(n.state);
 
       if (problem.isGoal(n.state)) return n;
 
       for (var succ : n.expand(problem)) {
-        var frontier_repre = state_to_frontier.get(succ.state);
-        if (frontier_repre == null || frontier_repre.cost > succ.cost) {
-          state_to_frontier.put(succ.state, succ);
+        var frontierRepre = stateToFrontier.get(succ.state);
+        if (frontierRepre == null || frontierRepre.cost > succ.cost) {
+          stateToFrontier.put(succ.state, succ);
           frontier.add(succ);
         }
       }

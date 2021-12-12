@@ -41,7 +41,7 @@ class AStarTest {
         for (int[] p : puzzles) {
             PuzzleState ps = new PuzzleState(4, p);
             System.out.println("\n" + ps);
-      
+
             NPuzzle np = new NPuzzle(ps);
             runTest(np);
         }

@@ -6,13 +6,13 @@ import java.util.LinkedList;
 import java.util.Collections;
 
 public class Node<S, A> implements Comparable<Node<S, A>> {
-  public Node<S, A> prev_node;
+  public Node<S, A> prevNode;
   public A action;
   public S state;
   public double cost;
 
-  private Node(Node<S, A> prev_node, A action, S state, double cost) {
-    this.prev_node = prev_node;
+  private Node(Node<S, A> prevNode, A action, S state, double cost) {
+    this.prevNode = prevNode;
     this.action = action;
     this.state = state;
     this.cost = cost;
@@ -25,14 +25,14 @@ public class Node<S, A> implements Comparable<Node<S, A>> {
   public List<Node<S, A>> expand(Problem<S, A> problem) {
     List<Node<S, A>> successors = new ArrayList<Node<S, A>>();
     for (A action : problem.actions(state)) {
-      var succ_state = problem.result(state, action);
-      var succ_cost = cost + problem.cost(state, action);
+      var succState = problem.result(state, action);
+      var succCost = cost + problem.cost(state, action);
 
       successors.add(new Node<S, A>(
         this,
         action,
-        succ_state,
-        succ_cost
+        succState,
+        succCost
       ));
     }
 
@@ -44,7 +44,7 @@ public class Node<S, A> implements Comparable<Node<S, A>> {
     var node = this;
     while (node != null && node.action != null) {
       actions.add(node.action);
-      node = node.prev_node;
+      node = node.prevNode;
     }
 
     Collections.reverse(actions);

@@ -32,12 +32,6 @@ public class Utility {
           maxPlayerInt = isLoosing ? util1.depth - util2.depth : util2.depth - util1.depth;
         }
 
-        // System.out.format("Utilities: %s; %s, isMaxPlayer: %s, res: %s\n",
-        //     util1,
-        //     util2,
-        //     isMaxPlayer,
-        //     isMaxPlayer ? maxPlayerInt : maxPlayerInt * -1);
-
         if (isMaxPlayer)
           return maxPlayerInt;
         else

@@ -2,6 +2,8 @@ import minimax.*;
 
 import static java.lang.System.out;
 
+import java.util.Comparator;
+
 public class Minimax<S, A> implements Strategy<S, A> {
   int debugLevel = 0;
 
@@ -35,6 +37,7 @@ public class Minimax<S, A> implements Strategy<S, A> {
 
   private Move chooseBestMove(S state, int depth, Utility alpha, Utility beta) {
     boolean isMaxPlayer = game.player(state) == 1;
+    Comparator<Utility> comp = Utility.getComparator(isMaxPlayer);
 
     debugPrint(String.format("Depth: %s, Maximizing player: %s", depth, isMaxPlayer), 1);
 
@@ -46,7 +49,7 @@ public class Minimax<S, A> implements Strategy<S, A> {
       game.apply(newState, action);
       var newUtility = exploreState(newState, depth + 1, alpha, beta);
 
-      if (newUtility.isBetterThan(chosenUtility, isMaxPlayer)) {
+      if (comp.compare(newUtility, chosenUtility) >= 1) {
         debugPrint(String.format(
             "New best move for max %s. Action: %s, Utility: %s, Best utility: %s",
             isMaxPlayer,
@@ -58,23 +61,32 @@ public class Minimax<S, A> implements Strategy<S, A> {
         chosenAction = action;
 
         if (isMaxPlayer) {
-          alpha = newUtility.isBetterThan(alpha, isMaxPlayer) ? newUtility : alpha;
+          alpha = comp.compare(newUtility, alpha) >= 1 ? newUtility : alpha;
         } else {
-          beta = newUtility.isBetterThan(beta, isMaxPlayer) ? newUtility : beta;
+          beta = comp.compare(newUtility, beta) >= 1 ? newUtility : beta;
         }
       }
 
-      if (isMaxPlayer && chosenUtility.isBetterThan(beta, isMaxPlayer)) {
+      if (isMaxPlayer && comp.compare(chosenUtility, beta) >= 0) {
         debugPrint(
             String.format("Beta cut-off. Beta: %s, util: %s", beta, chosenUtility),
             1);
         return new Move(chosenAction, chosenUtility);
-      } else if (!isMaxPlayer && chosenUtility.isBetterThan(alpha, isMaxPlayer)) {
+      } else if (!isMaxPlayer && comp.compare(chosenUtility, alpha) >= 0) {
         debugPrint(
             String.format("Alpha cut-off. Alpha: %s, util: %s", alpha, chosenUtility),
             1);
         return new Move(chosenAction, chosenUtility);
       }
+
+      debugPrint(
+        String.format("Un cut-off state. Max player: %s, [%s, %s], util: %s, state:\n%s",
+          isMaxPlayer,
+          alpha,
+          beta,
+          newUtility,
+          newState
+          ), 1);
     }
 
     debugPrint(
